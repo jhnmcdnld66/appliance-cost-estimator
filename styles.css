@@ -88,3 +88,15 @@ legend { font-weight: 700; padding: 0 .3rem; }
 #cmp-results { margin-top: 1rem; }
 .load-error { border: 2px solid var(--error); border-radius: 8px; padding: .5rem .8rem; background: #fdecea; font-weight: 400; }
 .load-error ul { margin: .25rem 0; }
+
+/* Compare states: three narrow columns that fit a 360px phone */
+.st-pickers { display: grid; grid-template-columns: 1fr 1fr; gap: 0 .75rem; }
+.st-table { table-layout: fixed; font-size: .85rem; }
+.st-table th, .st-table td { padding: .45rem .2rem; text-align: right; }
+.st-table td span { display: block; white-space: nowrap; }
+.st-table tr > :first-child { text-align: left; width: 22%; }
+.st-table thead th { vertical-align: bottom; }
+.st-table small { display: block; font-weight: 400; color: var(--muted); }
+.st-table .st-low { background: #e8f3ef; }
+.st-table .st-high { background: #fcefe3; }
+@media (min-width: 34rem) { .st-table { font-size: 1rem; } }

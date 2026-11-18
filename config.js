@@ -18,6 +18,11 @@ window.APP_CONFIG = {
   // State average residential rates in CENTS per kWh, Aug 2026 (preliminary), same EIA table.
   // Shown in the "Pick your state" dropdown. These are state averages, not any one utility's rate.
   stateRateLabel: "state average residential rate, Aug 2026 (EIA, preliminary)",
+  // "Compare states" section: the two states shown at first (codes from stateRates below)
+  stateCompare: {
+    defaults: ["NY", "NV"],
+    label: "State averages, EIA, August 2026 (preliminary)."
+  },
   stateRates: [
     { code: "US", name: "U.S. average", cents: 18.16 },
     { code: "AL", name: "Alabama", cents: 16.33 },

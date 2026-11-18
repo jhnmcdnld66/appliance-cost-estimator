@@ -13,7 +13,7 @@
     appliance: $("appliance"), note: $("appliance-note"), watts: $("watts"),
     hours: $("hours"), days: $("days"), duty: $("duty"), dutyTip: $("duty-tip"),
     rate: $("rate"), rateLabel: $("rate-label"), state: $("state"), error: $("form-error"),
-    timeError: $("time-error"),
+    timeError: $("time-error"), stA: $("st-a"), stB: $("st-b"),
     share: $("share-x")
   };
   Object.keys(els).forEach(function (k) {
@@ -125,7 +125,7 @@
     if (!(r >= 0)) bad.push("electric rate");
     els.error.textContent = bad.length ? "Please check: " + bad.join(", ") + "." : "";
     els.error.hidden = !bad.length;
-    if (bad.length || t.error) return false;
+    if (bad.length || t.error) { updateStates(null); return false; }
 
     var perHour = w / 1000;
     var periods = { hour: perHour, day: perHour * h, month: perHour * h * d, year: perHour * h * d * 12 };
@@ -135,6 +135,7 @@
     });
     lastMonthly = periods.month * r;
     updateShare();
+    updateStates(w / 1000 * h, h, d);
     return true;
   }
 
@@ -147,6 +148,84 @@
     els.share.href = "https://x.com/intent/post?text=" + encodeURIComponent(text) +
       "&url=" + encodeURIComponent(C.siteUrl);
   }
+
+  // Compare states: U.S. average vs two picked states, always at state-average rates (never the custom rate)
+  var SC = C.stateCompare, stA = $("st-a"), stB = $("st-b"), stBody = $("st-body"), stShare = $("share-states");
+  C.stateRates.forEach(function (s) {
+    if (s.code === "US") return;
+    [stA, stB].forEach(function (sel) {
+      var opt = document.createElement("option");
+      opt.value = s.code; opt.textContent = s.name;
+      sel.appendChild(opt);
+    });
+  });
+  stA.value = SC.defaults[0]; stB.value = SC.defaults[1];
+  $("st-label").textContent = SC.label;
+  var lastStates = null;
+  function rateOf(code) { return C.stateRates.find(function (s) { return s.code === code; }); }
+  function whole(v) { return "$" + Math.round(v).toLocaleString("en-US"); }
+  function updateStates(kwhDay, h, d) {
+    if (kwhDay !== undefined) lastStates = kwhDay === null ? null : { kwhDay: kwhDay, h: h, d: d };
+    var cols = [rateOf("US"), rateOf(stA.value), rateOf(stB.value)];
+    var month = cols.map(function (s) { return lastStates ? lastStates.kwhDay * lastStates.d * s.cents / 100 : 0; });
+    var lo = Math.min.apply(null, month), hi = Math.max.apply(null, month);
+    cols.forEach(function (s, i) {
+      var cls = !lastStates || lo === hi ? "" : month[i] === lo ? "st-low" : month[i] === hi ? "st-high" : "";
+      var th = $("st-h" + i);
+      th.className = cls;
+      th.innerHTML = "";
+      th.appendChild(document.createTextNode(i === 0 ? "U.S. avg" : s.code));
+      if (cls) {
+        var tag = document.createElement("small");
+        tag.textContent = cls === "st-low" ? "lowest" : "highest";
+        th.appendChild(tag);
+      }
+      th.title = s.name;
+      cols[i].cls = cls;
+    });
+    var rows = [["Rate (¢/kWh)", function (s) { return s.cents + "¢"; }]];
+    if (lastStates) {
+      rows.push(["Per day", function (s, i) { return money(month[i] / lastStates.d || 0); }],
+        ["Per month", function (s, i) { return money(month[i]); }],
+        ["Per year", function (s, i) { return money(month[i] * 12); }],
+        ["vs U.S. avg (per month)", function (s, i) {
+          if (i === 0) return "–";
+          var diff = month[i] - month[0], pct = month[0] ? Math.round(diff / month[0] * 100) : 0;
+          var sign = diff < 0 ? "−" : "+";
+          return [sign + money(Math.abs(diff)), (pct < 0 ? "−" : "+") + Math.abs(pct) + "%"];
+        }]);
+    } else {
+      rows.push(["Per month", function () { return "–"; }]);
+    }
+    stBody.innerHTML = "";
+    rows.forEach(function (row) {
+      var tr = document.createElement("tr"), rh = document.createElement("th");
+      rh.scope = "row"; rh.textContent = row[0]; tr.appendChild(rh);
+      cols.forEach(function (s, i) {
+        var td = document.createElement("td");
+        var v = row[1](s, i);
+        (Array.isArray(v) ? v : [v]).forEach(function (part) {
+          var span = document.createElement("span");
+          span.textContent = part;
+          td.appendChild(span);
+        });
+        if (s.cls) td.className = s.cls;
+        tr.appendChild(td);
+      });
+      stBody.appendChild(tr);
+    });
+    var a = current(), name = a.id === "custom" ? "a " + num(els.watts) + " W appliance" : a.name.replace(/\s*\(.*\)$/, "");
+    if (a.id !== "custom" && /^[A-Z][a-z]/.test(name)) name = name.charAt(0).toLowerCase() + name.slice(1);
+    $("st-for").textContent = lastStates ? "For your " + num(els.watts) + " W " + (a.id === "custom" ? "appliance" : name) +
+      ", " + round2(lastStates.h) + " h/day, " + lastStates.d + " days/month." : "Fill in the calculator above to compare.";
+    if (lastStates) {
+      var article = a.id === "custom" || /^EV /.test(name) ? "" : /^[aeiou]/i.test(name) ? "an " : "a ";
+    var text = "Running " + article + name + " " + round2(lastStates.h) + " h/day costs " + whole(month[1]) + "/mo in " + cols[1].code +
+        " vs " + whole(month[2]) + "/mo in " + cols[2].code + " (U.S. avg " + whole(month[0]) + "). via " + C.siteName;
+      stShare.href = "https://x.com/intent/post?text=" + encodeURIComponent(text) + "&url=" + encodeURIComponent(C.siteUrl);
+    }
+  }
+  [stA, stB].forEach(function (sel) { sel.addEventListener("change", function () { updateStates(); }); });
 
   els.appliance.addEventListener("change", applyPreset);
   els.hours.addEventListener("input", function () { syncTime("hours"); });
