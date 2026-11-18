@@ -80,10 +80,12 @@
       </div>
 
       <p id="form-error" class="error" role="alert" hidden></p>
-      <p id="load-error" class="error" role="alert" hidden>
-        The calculator files didn't load. If you opened this from inside a ZIP file, extract (unzip) the
-        whole folder first, then open <code>index.html</code> from the extracted folder.
-      </p>
+      <div id="load-error" class="error load-error" role="alert" hidden>
+        <p><strong>The calculator didn't start.</strong> What failed:</p>
+        <ul id="load-error-list"></ul>
+        <p>If you opened this from inside a ZIP file, extract (unzip) the whole folder first, then open
+          <code>index.html</code> from the extracted folder. On a web server, reload the page (Ctrl+Shift+R, or pull down to refresh on a phone).</p>
+      </div>
 
       <button type="submit" class="button calc-button">Calculate now</button>
     </form>
@@ -204,13 +206,38 @@
 
   <noscript><p class="error" style="text-align:center">Please turn on JavaScript to use the calculator.</p></noscript>
   <!-- Plain scripts (no modules, no fetch) so the page works when opened directly from a file. Order matters: config first. -->
+  <script>
+    // Collect script errors (including files that fail to load) so they can be shown on the page.
+    window.APP_ERRORS = [];
+    window.addEventListener("error", function (e) {
+      var t = e.target;
+      if (t && t.tagName === "SCRIPT") {
+        window.APP_ERRORS.push("Couldn't load " + t.src.split("/").pop());
+      } else if (t === window && e.message && e.message !== "Script error.") {
+        window.APP_ERRORS.push((e.filename ? e.filename.split("/").pop() + ": " : "") + e.message);
+      }
+    }, true);
+  </script>
   <script src="config.js"></script>
   <script src="app.js"></script>
   <script src="compare.js"></script>
   <script>
-    if (!window.APP_CONFIG || !window.APP_READY) {
-      document.getElementById("load-error").hidden = false;
-    }
+    (function () {
+      var problems = window.APP_ERRORS.slice();
+      if (!window.APP_CONFIG) problems.push("config.js didn't load or has an error, so there are no appliance presets.");
+      if (!window.APP_READY) problems.push("app.js didn't finish starting.");
+      if (!window.COMPARE_READY) problems.push("compare.js didn't finish starting.");
+      if (!problems.length) return;
+      var list = document.getElementById("load-error-list");
+      problems.forEach(function (msg) {
+        var li = document.createElement("li");
+        li.textContent = msg;
+        list.appendChild(li);
+      });
+      var box = document.getElementById("load-error");
+      box.hidden = false;
+      box.scrollIntoView();
+    })();
   </script>
 </body>
 </html>

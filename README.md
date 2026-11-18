@@ -65,7 +65,7 @@ Open `config.js` and find the `appliances` list. Each appliance is one line like
 
 **To change the default rate:** edit `defaultRate` and `defaultRateLabel`.
 
-After changing any file, open `sw.js` and bump `CACHE_VERSION` (for example `ace-v1` to `ace-v2`). Otherwise phones that already installed the app keep the old version.
+If you add or remove a file, add it to the list in `sw.js` and bump `CACHE_VERSION` (for example `ace-v5` to `ace-v6`). The app always loads fresh files when online, and uses the saved copy only when offline.
 
 ## Old vs new comparison
 

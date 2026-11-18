@@ -1,11 +1,19 @@
 // Old vs new comparison. Figures and sources live in config.js (compare section).
 (function () {
   "use strict";
+  try { start(); window.COMPARE_READY = true; } catch (err) {
+    (window.APP_ERRORS = window.APP_ERRORS || []).push("compare.js: " + err.message);
+  }
+
+  function start() {
   var C = window.APP_CONFIG && window.APP_CONFIG.compare;
-  if (!C) return;
+  if (!C) throw new Error("comparison settings from config.js are missing");
   var $ = function (id) { return document.getElementById(id); };
   var type = $("cmp-type"), oldAge = $("cmp-old-age"), oldKwh = $("cmp-old-kwh"),
       newKind = $("cmp-new-kind"), newKwh = $("cmp-new-kwh"), price = $("cmp-price"), rate = $("rate");
+  [type, oldAge, oldKwh, newKind, newKwh, price, rate].forEach(function (el) {
+    if (!el) throw new Error("a comparison form field was not found (files may be from different versions)");
+  });
 
   function fill(sel, items, label) {
     sel.innerHTML = "";
@@ -91,4 +99,5 @@
     $("cmp-results").scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "center" });
   });
   compare();
+  }
 })();

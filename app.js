@@ -1,6 +1,12 @@
 (function () {
   "use strict";
+  try { start(); } catch (err) {
+    (window.APP_ERRORS = window.APP_ERRORS || []).push("app.js: " + err.message);
+  }
+
+  function start() {
   var C = window.APP_CONFIG;
+  if (!C) throw new Error("settings from config.js are missing");
   var $ = function (id) { return document.getElementById(id); };
 
   var els = {
@@ -9,6 +15,9 @@
     rate: $("rate"), rateLabel: $("rate-label"), state: $("state"), error: $("form-error"),
     share: $("share-x")
   };
+  Object.keys(els).forEach(function (k) {
+    if (!els[k]) throw new Error("page element '" + k + "' not found (files may be from different versions)");
+  });
 
   // Populate the appliance picker
   els.appliance.innerHTML = "";
@@ -171,5 +180,6 @@
         navigator.serviceWorker.register("sw.js").catch(function () {});
       } catch (err) { /* ignore: the calculator works without it */ }
     }
+  }
   }
 })();

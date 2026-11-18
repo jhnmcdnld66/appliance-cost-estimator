@@ -1,6 +1,8 @@
-// Service worker: caches every file so the app works offline.
-// When you change any file, bump CACHE_VERSION so phones pick up the update.
-var CACHE_VERSION = "ace-v4";
+// Service worker: keeps a copy of every file so the app works offline.
+// Online it always fetches fresh files first (so old and new versions never mix);
+// offline it falls back to the saved copy.
+// When you change the file list below, bump CACHE_VERSION.
+var CACHE_VERSION = "ace-v5";
 var FILES = [
   "./", "index.html", "styles.css", "config.js", "app.js", "compare.js", "manifest.webmanifest",
   "icons/icon.svg", "icons/icon-192.png", "icons/icon-512.png",
@@ -9,7 +11,9 @@ var FILES = [
 ];
 
 self.addEventListener("install", function (e) {
-  e.waitUntil(caches.open(CACHE_VERSION).then(function (c) { return c.addAll(FILES); }));
+  e.waitUntil(caches.open(CACHE_VERSION).then(function (c) {
+    return c.addAll(FILES.map(function (f) { return new Request(f, { cache: "reload" }); }));
+  }));
   self.skipWaiting();
 });
 
@@ -17,13 +21,18 @@ self.addEventListener("activate", function (e) {
   e.waitUntil(caches.keys().then(function (keys) {
     return Promise.all(keys.filter(function (k) { return k !== CACHE_VERSION; })
       .map(function (k) { return caches.delete(k); }));
-  }));
-  self.clients.claim();
+  }).then(function () { return self.clients.claim(); }));
 });
 
 self.addEventListener("fetch", function (e) {
-  if (e.request.method !== "GET") return;
-  e.respondWith(caches.match(e.request, { ignoreSearch: true }).then(function (hit) {
-    return hit || fetch(e.request);
+  if (e.request.method !== "GET" || new URL(e.request.url).origin !== location.origin) return;
+  e.respondWith(fetch(e.request, { cache: "no-cache" }).then(function (res) {
+    if (res.ok) {
+      var copy = res.clone();
+      caches.open(CACHE_VERSION).then(function (c) { c.put(e.request, copy); });
+    }
+    return res;
+  }).catch(function () {
+    return caches.match(e.request, { ignoreSearch: true });
   }));
 });

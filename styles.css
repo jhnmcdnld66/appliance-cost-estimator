@@ -86,3 +86,5 @@ legend { font-weight: 700; padding: 0 .3rem; }
 .src { display: block; font-size: .8rem; font-weight: 400; color: var(--muted); }
 .payback { font-weight: 600; margin: .75rem 0 .25rem; }
 #cmp-results { margin-top: 1rem; }
+.load-error { border: 2px solid var(--error); border-radius: 8px; padding: .5rem .8rem; background: #fdecea; font-weight: 400; }
+.load-error ul { margin: .25rem 0; }
