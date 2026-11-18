@@ -10,6 +10,7 @@ It's plain HTML, CSS, and JavaScript: no frameworks, no build step, no backend, 
 |---|---|
 | `index.html` | The main page: the calculator (with a "Calculate now" button; pressing Enter works too), results table, Share on X button, explainer links, and the placeholder blocks below the results. |
 | `config.js` | **The file you'll edit most.** Default electric rate, appliance presets, and the affiliate / tip / sponsor placeholders. |
+| `compare.js` | The "Compare old vs new" section (refrigerators and freezers): annual kWh, cost, savings, and payback. |
 | `app.js` | The calculator logic. Reads `config.js`, does the math, builds the share link, and shows or hides the placeholder blocks. |
 | `styles.css` | All the styling (mobile-first). |
 | `manifest.webmanifest` | Tells phones the app's name, colors, and icon for "Add to Home Screen". |
@@ -66,6 +67,16 @@ Open `config.js` and find the `appliances` list. Each appliance is one line like
 
 After changing any file, open `sw.js` and bump `CACHE_VERSION` (for example `ace-v1` to `ace-v2`). Otherwise phones that already installed the app keep the old version.
 
+## Old vs new comparison
+
+The "Compare old vs new" section uses the `compare` part of `config.js`:
+
+- **New models:** medians from ENERGY STAR's public data for full-size certified [refrigerators](https://data.energystar.gov/Active-Specifications/ENERGY-STAR-Certified-Residential-Refrigerators/p5st-her9) and [freezers](https://data.energystar.gov/Active-Specifications/ENERGY-STAR-Certified-Residential-Freezers/8t9c-g3tn), downloaded Nov 2026. "ENERGY STAR new" is the median EnergyGuide kWh/year. "Standard new" is the median U.S. federal standard maximum for those same models.
+- **Old models:** **rough estimates** (standard new × 1.8 before 2001, × 1.35 for 2001–2010, × 1.15 for 2011–2020). They are not measured data, and the page labels them that way.
+- Users can type the kWh/year from the yellow EnergyGuide label for their exact old and new models. This replaces the typical values.
+
+To refresh the numbers, re-download the ENERGY STAR data and update `standardNew`, `energyStarNew`, and `n` for each type.
+
 ## Placeholders (nothing real yet)
 
 - **Affiliate block ("Efficient models")**: `affiliate` in `config.js`. All links are `href: "#"`. Includes the disclosure "We may earn a commission from links on this page."
@@ -90,4 +101,5 @@ All of these show up only below the results. Nothing covers the calculator, and 
 - [ ] Double-check the default rate against the latest EIA data.
 - [ ] Review the preset wattages and duty-cycle defaults.
 - [ ] Test "Add to Home Screen" and offline mode on a real iPhone and Android phone once hosted (needs HTTPS).
+- [ ] Find a sourced replacement for the "rough estimate" old-appliance multipliers, and consider adding window AC, dehumidifiers, washers/dryers, and water heaters to the comparison.
 - [ ] Optional: find a local sponsor and turn on the sponsor card.

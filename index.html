@@ -94,6 +94,79 @@
       <a id="share-x" class="button" href="https://x.com/intent/post" target="_blank" rel="noopener noreferrer">Share on X</a>
     </section>
 
+    <section id="compare" class="card" aria-labelledby="compare-heading">
+      <h2 id="compare-heading">Compare old vs new</h2>
+      <p class="hint">See how much you could save by replacing an old refrigerator or freezer. Uses your electric rate from above.</p>
+      <form id="compare-form" novalidate>
+        <div class="field">
+          <label for="cmp-type">Appliance type</label>
+          <select id="cmp-type"><option value="">Loading…</option></select>
+        </div>
+        <div class="grid">
+          <fieldset>
+            <legend>Old appliance</legend>
+            <div class="field">
+              <label for="cmp-old-age">Age</label>
+              <select id="cmp-old-age"></select>
+            </div>
+            <div class="field">
+              <label for="cmp-old-kwh">kWh/year from its EnergyGuide label (optional)</label>
+              <input id="cmp-old-kwh" type="number" inputmode="numeric" min="0" step="1" placeholder="e.g. 650">
+            </div>
+          </fieldset>
+          <fieldset>
+            <legend>New appliance</legend>
+            <div class="field">
+              <label for="cmp-new-kind">Model</label>
+              <select id="cmp-new-kind">
+                <option value="energyStarNew">ENERGY STAR new model</option>
+                <option value="standardNew">Standard new model</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="cmp-new-kwh">kWh/year from its EnergyGuide label (optional)</label>
+              <input id="cmp-new-kwh" type="number" inputmode="numeric" min="0" step="1" placeholder="e.g. 400">
+            </div>
+          </fieldset>
+        </div>
+        <details>
+          <summary>Where do I find the EnergyGuide label?</summary>
+          <p>It's the yellow label that says <strong>Estimated Yearly Energy Use</strong> in kWh. On an appliance you own,
+            look inside the door or on the side or back (older units may no longer have it). For a new model, it's on the
+            appliance in the store and usually in the store's online listing. You can also search the model number in the
+            ENERGY STAR product finder. The kWh/year number is more accurate than our typical values, so use it when you can.</p>
+        </details>
+        <div class="field">
+          <label for="cmp-price">New appliance price in $ (optional, for payback)</label>
+          <input id="cmp-price" type="number" inputmode="decimal" min="0" step="any" placeholder="e.g. 1200">
+        </div>
+        <p id="cmp-error" class="error" role="alert" hidden></p>
+        <button type="submit" class="button calc-button">Compare</button>
+      </form>
+
+      <div id="cmp-results" aria-live="polite">
+        <table>
+          <thead><tr><th scope="col"></th><th scope="col">Energy / year</th><th scope="col">Cost / year</th></tr></thead>
+          <tbody>
+            <tr><th scope="row">Old <span id="cmp-old-src" class="src"></span></th><td id="cmp-old-year-kwh">–</td><td id="cmp-old-year-cost">–</td></tr>
+            <tr><th scope="row">New <span id="cmp-new-src" class="src"></span></th><td id="cmp-new-year-kwh">–</td><td id="cmp-new-year-cost">–</td></tr>
+            <tr class="highlight"><th scope="row">You save</th><td id="cmp-save-kwh">–</td><td><span id="cmp-save-year">–</span><span id="cmp-save-month" class="src"></span></td></tr>
+          </tbody>
+        </table>
+        <p id="cmp-payback" class="payback"></p>
+        <p id="cmp-rate-note" class="hint"></p>
+        <p class="hint"><strong>Source:</strong> <span id="cmp-source"></span></p>
+      </div>
+    </section>
+
+    <!-- Local sponsor slot: right below the savings result. Off by default (config.js > sponsor.enabled). -->
+    <aside id="sponsor" class="card placeholder" aria-label="Local sponsor" hidden>
+      <p class="badge">Local sponsor</p>
+      <h2 id="sponsor-name"></h2>
+      <p id="sponsor-message"></p>
+      <a id="sponsor-link" href="#" rel="sponsored nofollow">Learn more</a>
+    </aside>
+
     <section class="card">
       <h2>Learn more</h2>
       <ul>
@@ -111,12 +184,6 @@
       <ul id="affiliate-links"></ul>
     </aside>
 
-    <aside id="sponsor" class="card placeholder" aria-label="Local sponsor" hidden>
-      <p class="badge">Local sponsor</p>
-      <h2 id="sponsor-name"></h2>
-      <p id="sponsor-message"></p>
-      <a id="sponsor-link" href="#" rel="sponsored nofollow">Learn more</a>
-    </aside>
 
     <p id="tip" class="tip-line" hidden><span class="badge">Placeholder</span> Find this useful? <a id="tip-link" href="#"></a></p>
   </main>
@@ -130,6 +197,7 @@
   <!-- Plain scripts (no modules, no fetch) so the page works when opened directly from a file. Order matters: config first. -->
   <script src="config.js"></script>
   <script src="app.js"></script>
+  <script src="compare.js"></script>
   <script>
     if (!window.APP_CONFIG || !window.APP_READY) {
       document.getElementById("load-error").hidden = false;

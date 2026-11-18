@@ -65,6 +65,41 @@ window.APP_CONFIG = {
       note: "Find watts on the appliance label, or multiply volts × amps." }
   ],
 
+  // OLD vs NEW comparison (refrigerators and freezers).
+  //
+  // "standardNew" and "energyStarNew" come from ENERGY STAR's public certified-product data
+  // (downloaded 2026-11-17, full-size models only, i.e. compact = "No"):
+  //   Refrigerators: https://data.energystar.gov/Active-Specifications/ENERGY-STAR-Certified-Residential-Refrigerators/p5st-her9
+  //   Freezers:      https://data.energystar.gov/Active-Specifications/ENERGY-STAR-Certified-Residential-Freezers/8t9c-g3tn
+  //   energyStarNew = median "annual_energy_use_kwh_yr" (from the EnergyGuide test) of certified models of that type
+  //   standardNew   = median "us_federal_standard_kwh_yr" for those same models, i.e. the most a
+  //                   standard (non-ENERGY STAR) new model of the same size and type may use under the federal standard
+  //   n             = number of models in the median
+  // ENERGY STAR says certified refrigerators are about 9% more efficient than the federal minimum
+  // (https://www.energystar.gov/products/refrigerators).
+  //
+  // "old" values are ROUGH ESTIMATES, not measured data: the federal maximum for a new model
+  // (standardNew) multiplied by oldMultipliers below, to roughly reflect older, looser efficiency
+  // standards plus wear. Users should enter the kWh/year from the old unit's EnergyGuide label when they can.
+  compare: {
+    sourceNote: "New-model figures: medians of ENERGY STAR certified full-size models and their U.S. federal standard values (data.energystar.gov, downloaded Nov 2026). Old-model figures are rough estimates. For your exact models, use the kWh/year on the yellow EnergyGuide label.",
+    oldBands: [
+      { id: "pre2001", label: "Before 2001" },
+      { id: "2001-2010", label: "2001–2010" },
+      { id: "2011-2020", label: "2011–2020" }
+    ],
+    // Rough estimate: old kWh/year = standardNew × multiplier
+    oldMultipliers: { "pre2001": 1.8, "2001-2010": 1.35, "2011-2020": 1.15 },
+    types: [
+      { id: "fridge-top", name: "Refrigerator — top freezer", standardNew: 404, energyStarNew: 363, n: 840 },
+      { id: "fridge-bottom", name: "Refrigerator — bottom freezer / French door", standardNew: 623, energyStarNew: 560, n: 1706 },
+      { id: "fridge-side", name: "Refrigerator — side-by-side", standardNew: 696, energyStarNew: 642, n: 128 },
+      { id: "fridge-only", name: "Refrigerator — no freezer / single door", standardNew: 334, energyStarNew: 288, n: 302 },
+      { id: "freezer-upright", name: "Freezer — upright", standardNew: 494, energyStarNew: 438, n: 509 },
+      { id: "freezer-chest", name: "Freezer — chest", standardNew: 244, energyStarNew: 218, n: 9 }
+    ]
+  },
+
   // PLACEHOLDER affiliate block. Replace href "#" with real links before launch.
   affiliate: {
     enabled: true,
