@@ -2,7 +2,7 @@
 // Online it always fetches fresh files first (so old and new versions never mix);
 // offline it falls back to the saved copy.
 // When you change the file list below, bump CACHE_VERSION.
-var CACHE_VERSION = "ace-v5";
+var CACHE_VERSION = "ace-v6";
 var FILES = [
   "./", "index.html", "styles.css", "config.js", "app.js", "compare.js", "manifest.webmanifest",
   "icons/icon.svg", "icons/icon-192.png", "icons/icon-512.png",

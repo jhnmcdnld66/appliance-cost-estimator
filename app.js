@@ -13,6 +13,7 @@
     appliance: $("appliance"), note: $("appliance-note"), watts: $("watts"),
     hours: $("hours"), days: $("days"), duty: $("duty"), dutyTip: $("duty-tip"),
     rate: $("rate"), rateLabel: $("rate-label"), state: $("state"), error: $("form-error"),
+    timeError: $("time-error"),
     share: $("share-x")
   };
   Object.keys(els).forEach(function (k) {
@@ -72,13 +73,36 @@
     els.watts.value = a.watts;
     els.hours.value = a.hours;
     els.days.value = a.days;
-    els.duty.value = a.duty;
+    syncTime("hours");
     els.note.textContent = a.note || "";
     els.dutyTip.hidden = !a.cycles;
     calculate();
   }
 
   function num(el) { return parseFloat(el.value); }
+  function round2(v) { return Math.round(v * 100) / 100; }
+
+  // "Hours per day" and "Percent of the day" are two views of one value (percent of 24 hours).
+  // The field the user last typed in is the source; the other is filled in, never the one being typed.
+  var timeSource = "hours";
+  function syncTime(source) {
+    timeSource = source;
+    var h = num(els.hours), p = num(els.duty);
+    if (source === "hours" && h >= 0 && h <= 24) els.duty.value = round2(h / 24 * 100);
+    if (source === "duty" && p >= 0 && p <= 100) els.hours.value = round2(p / 100 * 24);
+  }
+  // Shared value in hours per day, or an error message
+  function hoursPerDay() {
+    var h = els.hours.value.trim(), p = els.duty.value.trim();
+    if (h === "" && p === "") return { error: "Enter hours per day or percent of the day." };
+    var useHours = timeSource === "hours" ? h !== "" : p === "";
+    if (useHours) {
+      var hv = parseFloat(h);
+      return hv >= 0 && hv <= 24 ? { hours: hv } : { error: "Hours per day must be between 0 and 24." };
+    }
+    var pv = parseFloat(p);
+    return pv >= 0 && pv <= 100 ? { hours: pv / 100 * 24 } : { error: "Percent of the day must be between 0 and 100." };
+  }
 
   function money(v) {
     var digits = v < 1 ? 3 : 2;
@@ -92,21 +116,18 @@
   var lastMonthly = null;
 
   function calculate() {
-    var w = num(els.watts), h = num(els.hours), d = num(els.days), p = num(els.duty), r = num(els.rate);
+    var w = num(els.watts), t = hoursPerDay(), h = t.hours, d = num(els.days), r = num(els.rate);
+    els.timeError.textContent = t.error || "";
+    els.timeError.hidden = !t.error;
     var bad = [];
     if (!(w >= 0)) bad.push("watts");
-    if (!(h >= 0 && h <= 24)) bad.push("hours per day (0–24)");
     if (!(d >= 0 && d <= 31)) bad.push("days per month (0–31)");
-    if (!(p >= 0 && p <= 100)) bad.push("percent of time running (0–100)");
     if (!(r >= 0)) bad.push("electric rate");
-    if (bad.length) {
-      els.error.textContent = "Please check: " + bad.join(", ") + ".";
-      els.error.hidden = false;
-      return;
-    }
-    els.error.hidden = true;
+    els.error.textContent = bad.length ? "Please check: " + bad.join(", ") + "." : "";
+    els.error.hidden = !bad.length;
+    if (bad.length || t.error) return false;
 
-    var perHour = (w / 1000) * (p / 100);
+    var perHour = w / 1000;
     var periods = { hour: perHour, day: perHour * h, month: perHour * h * d, year: perHour * h * d * 12 };
     Object.keys(periods).forEach(function (k) {
       $("kwh-" + k).textContent = kwh(periods[k]);
@@ -114,6 +135,7 @@
     });
     lastMonthly = periods.month * r;
     updateShare();
+    return true;
   }
 
   function updateShare() {
@@ -127,14 +149,15 @@
   }
 
   els.appliance.addEventListener("change", applyPreset);
+  els.hours.addEventListener("input", function () { syncTime("hours"); });
+  els.duty.addEventListener("input", function () { syncTime("duty"); });
   [els.watts, els.hours, els.days, els.duty, els.rate].forEach(function (el) {
     el.addEventListener("input", calculate);
   });
   // "Calculate now" button and Enter key both submit the form
   $("calc-form").addEventListener("submit", function (e) {
     e.preventDefault();
-    calculate();
-    if (!els.error.hidden) return;
+    if (!calculate()) return;
     var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     var results = $("results-heading");
     results.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "start" });

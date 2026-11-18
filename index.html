@@ -39,23 +39,24 @@
         </div>
         <div class="field">
           <label for="hours">Hours per day</label>
-          <input id="hours" type="number" inputmode="decimal" min="0" max="24" step="any">
+          <input id="hours" type="number" inputmode="decimal" min="0" max="24" step="any" aria-describedby="time-help time-error">
         </div>
         <div class="field">
           <label for="days">Days per month</label>
           <input id="days" type="number" inputmode="numeric" min="0" max="31" step="1">
         </div>
         <div class="field">
-          <label for="duty">Percent of time running (optional)</label>
-          <input id="duty" type="number" inputmode="decimal" min="0" max="100" step="any" aria-describedby="duty-help">
-          <p id="duty-help" class="hint">Leave at 100 unless the appliance cycles on and off.</p>
+          <label for="duty">Percent of the day</label>
+          <input id="duty" type="number" inputmode="decimal" min="0" max="100" step="any" aria-describedby="time-help time-error">
         </div>
       </div>
+      <p id="time-help" class="hint">Enter hours per day or percent of the day — the other fills in automatically.</p>
+      <p id="time-error" class="error" role="alert" hidden></p>
 
       <p id="duty-tip" class="tip" hidden>
         <strong>Heads up:</strong> this appliance cycles on and off (thermostat or compressor), so it
-        doesn't draw full power the whole time. Lower the "percent of time running" to match how often
-        it actually runs in your home and weather.
+        doesn't draw full power the whole time. The hours shown are the time it actually runs; change them
+        to match your home and weather.
       </p>
 
       <div class="grid">
@@ -101,7 +102,7 @@
           <tr><th scope="row">Per year</th><td id="kwh-year">–</td><td id="cost-year">–</td></tr>
         </tbody>
       </table>
-      <p class="hint">"Per hour" is an hour of use. Per year = per month × 12. Estimates only — see the <a href="pages/disclaimer.html">disclaimer</a>.</p>
+      <p class="hint">"Per hour" is an hour of running. Per year = per month × 12. Estimates only — see the <a href="pages/disclaimer.html">disclaimer</a>.</p>
       <a id="share-x" class="button" href="https://x.com/intent/post" target="_blank" rel="noopener noreferrer">Share on X</a>
     </section>
 

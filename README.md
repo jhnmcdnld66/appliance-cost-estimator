@@ -37,7 +37,8 @@ To try it on your phone, the phone needs to reach the computer over HTTPS (or `l
 ## How the math works
 
 ```
-kWh per hour  = watts ÷ 1000 × (percent of time running ÷ 100)
+kWh per hour  = watts ÷ 1000            (an hour of running at full power)
+hours per day = percent of the day ÷ 100 × 24   (the two fields fill each other in)
 kWh per day   = kWh per hour × hours per day
 kWh per month = kWh per day × days per month
 kWh per year  = kWh per month × 12
@@ -49,14 +50,13 @@ cost          = kWh × rate ($ per kWh)
 Open `config.js` and find the `appliances` list. Each appliance is one line like this:
 
 ```js
-{ id: "space-heater", name: "Space heater (1500 W)", watts: 1500, hours: 8, days: 30, duty: 100, cycles: true,
+{ id: "space-heater", name: "Space heater (1500 W)", watts: 1500, hours: 8, days: 30, cycles: true,
   note: "Most plug-in heaters max out at 1500 W." },
 ```
 
 - `id`: a unique short name (letters and dashes, no spaces).
 - `name`: what appears in the dropdown.
-- `watts`, `hours`, `days`: default values filled in when the appliance is picked.
-- `duty`: default "percent of time running" (100 = always on while in use).
+- `watts`, `hours`, `days`: default values filled in when the appliance is picked. For appliances that cycle on and off, `hours` is the time it actually runs (e.g. a fridge: 8.4 hours = 35% of the day).
 - `cycles`: `true` shows the "this appliance cycles on and off" tip.
 - `note`: short hint shown under the dropdown.
 
@@ -91,7 +91,7 @@ All of these show up only below the results. Nothing covers the calculator, and 
 
 - **Default rate $0.1816/kWh and state rates**: U.S. and state average residential prices for August 2026 (preliminary) from the U.S. Energy Information Administration, *Electric Power Monthly*, [Table 5.6.A](https://www.eia.gov/electricity/monthly/xls/table_5_06_a.xlsx) (released 2026-10-23). To update them, edit `defaultRate` and `stateRates` (in cents) in `config.js`.
 - **Wattages**: typical values in line with the U.S. Department of Energy's appliance energy guidance (<https://www.energy.gov/energysaver/estimating-appliance-and-home-electronic-energy-use>) and common product specs (1500 W plug-in heaters, 4500 W water heater elements, 120 V × 12 A ≈ 1.4 kW Level 1 EV charging, 240 V × 30 A ≈ 7.2 kW Level 2). Real appliances vary; the notes in `config.js` give typical ranges.
-- **Default "percent of time running"** values for cycling appliances (fridge 35%, AC/heat pump 60%, and others) are rough rules of thumb, not measured data.
+- **Default running hours** for cycling appliances (fridge 8.4 h = 35% of the day, AC/heat pump 4.8 h, and others) are rough rules of thumb, not measured data.
 
 ## TODO before launch
 
@@ -100,7 +100,7 @@ All of these show up only below the results. Nothing covers the calculator, and 
 - [ ] Set up a tip page and replace the tip link.
 - [ ] Update the Privacy page if any affiliate or tip services add tracking.
 - [ ] Refresh the default and state rates from the latest EIA Table 5.6.A (August 2026 numbers are preliminary).
-- [ ] Review the preset wattages and duty-cycle defaults.
+- [ ] Review the preset wattages and default running hours.
 - [ ] Test "Add to Home Screen" and offline mode on a real iPhone and Android phone once hosted (needs HTTPS).
 - [ ] Find a sourced replacement for the "rough estimate" old-freezer multipliers, and consider adding window AC, dehumidifiers, washers/dryers, and water heaters to the comparison.
 - [ ] Optional: find a local sponsor and turn on the sponsor card.
