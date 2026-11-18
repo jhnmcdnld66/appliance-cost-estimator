@@ -1,6 +1,6 @@
 // Service worker: caches every file so the app works offline.
 // When you change any file, bump CACHE_VERSION so phones pick up the update.
-var CACHE_VERSION = "ace-v1";
+var CACHE_VERSION = "ace-v2";
 var FILES = [
   "./", "index.html", "styles.css", "config.js", "app.js", "manifest.webmanifest",
   "icons/icon.svg", "icons/icon-192.png", "icons/icon-512.png",

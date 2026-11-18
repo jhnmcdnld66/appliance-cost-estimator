@@ -11,6 +11,7 @@
   };
 
   // Populate the appliance picker
+  els.appliance.innerHTML = "";
   C.appliances.forEach(function (a) {
     var opt = document.createElement("option");
     opt.value = a.id;
@@ -87,7 +88,16 @@
   [els.watts, els.hours, els.days, els.duty, els.rate].forEach(function (el) {
     el.addEventListener("input", calculate);
   });
-  $("calc-form").addEventListener("submit", function (e) { e.preventDefault(); calculate(); });
+  // "Calculate now" button and Enter key both submit the form
+  $("calc-form").addEventListener("submit", function (e) {
+    e.preventDefault();
+    calculate();
+    if (!els.error.hidden) return;
+    var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    var results = $("results-heading");
+    results.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "start" });
+    results.focus({ preventScroll: true });
+  });
 
   // Placeholder monetization blocks (below results only)
   if (C.affiliate && C.affiliate.enabled) {
@@ -115,7 +125,18 @@
 
   applyPreset();
 
-  if ("serviceWorker" in navigator && location.protocol !== "file:") {
-    navigator.serviceWorker.register("sw.js");
+  window.APP_READY = true;
+
+  // Offline/PWA features only work on a web server (http/https), never from file://
+  if (location.protocol === "http:" || location.protocol === "https:") {
+    var m = document.createElement("link");
+    m.rel = "manifest";
+    m.href = "manifest.webmanifest";
+    document.head.appendChild(m);
+    if ("serviceWorker" in navigator) {
+      try {
+        navigator.serviceWorker.register("sw.js").catch(function () {});
+      } catch (err) { /* ignore: the calculator works without it */ }
+    }
   }
 })();

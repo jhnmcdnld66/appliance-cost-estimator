@@ -6,7 +6,6 @@
   <title>Appliance Running-Cost Estimator</title>
   <meta name="description" content="Estimate how much it costs to run a home appliance per hour, day, month, and year at your electric rate.">
   <meta name="theme-color" content="#1f6f5c">
-  <link rel="manifest" href="manifest.webmanifest">
   <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="icons/icon-192.png">
   <link rel="stylesheet" href="styles.css">
@@ -29,7 +28,7 @@
     <form id="calc-form" class="card" novalidate>
       <div class="field">
         <label for="appliance">Appliance</label>
-        <select id="appliance"></select>
+        <select id="appliance"><option value="">Loading appliances…</option></select>
         <p id="appliance-note" class="hint" aria-live="polite"></p>
       </div>
 
@@ -72,10 +71,16 @@
       </div>
 
       <p id="form-error" class="error" role="alert" hidden></p>
+      <p id="load-error" class="error" role="alert" hidden>
+        The calculator files didn't load. If you opened this from inside a ZIP file, extract (unzip) the
+        whole folder first, then open <code>index.html</code> from the extracted folder.
+      </p>
+
+      <button type="submit" class="button calc-button">Calculate now</button>
     </form>
 
     <section class="card results" aria-labelledby="results-heading">
-      <h2 id="results-heading">Estimated cost</h2>
+      <h2 id="results-heading" tabindex="-1">Estimated cost</h2>
       <table>
         <thead><tr><th scope="col">Period</th><th scope="col">Energy</th><th scope="col">Cost</th></tr></thead>
         <tbody aria-live="polite">
@@ -121,7 +126,14 @@
     <p><a href="pages/about.html">About</a> · <a href="pages/privacy.html">Privacy</a> · <a href="pages/disclaimer.html">Disclaimer</a></p>
   </footer>
 
+  <noscript><p class="error" style="text-align:center">Please turn on JavaScript to use the calculator.</p></noscript>
+  <!-- Plain scripts (no modules, no fetch) so the page works when opened directly from a file. Order matters: config first. -->
   <script src="config.js"></script>
   <script src="app.js"></script>
+  <script>
+    if (!window.APP_CONFIG || !window.APP_READY) {
+      document.getElementById("load-error").hidden = false;
+    }
+  </script>
 </body>
 </html>

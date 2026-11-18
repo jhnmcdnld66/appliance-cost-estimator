@@ -8,7 +8,7 @@ It's plain HTML, CSS, and JavaScript: no frameworks, no build step, no backend, 
 
 | File | What it's for |
 |---|---|
-| `index.html` | The main page: the calculator, results table, Share on X button, explainer links, and the placeholder blocks below the results. |
+| `index.html` | The main page: the calculator (with a "Calculate now" button; pressing Enter works too), results table, Share on X button, explainer links, and the placeholder blocks below the results. |
 | `config.js` | **The file you'll edit most.** Default electric rate, appliance presets, and the affiliate / tip / sponsor placeholders. |
 | `app.js` | The calculator logic. Reads `config.js`, does the math, builds the share link, and shows or hides the placeholder blocks. |
 | `styles.css` | All the styling (mobile-first). |
@@ -20,6 +20,8 @@ It's plain HTML, CSS, and JavaScript: no frameworks, no build step, no backend, 
 ## How to open it on your computer
 
 **Option 1, quickest:** double-click `index.html` to open it in your browser. The calculator works, but offline/PWA mode won't, because browsers only allow service workers on a web server.
+
+If you downloaded a ZIP, **extract (unzip) the whole folder first**. Windows lets you open `index.html` while it's still inside the ZIP, but then the browser can't find `config.js` and `app.js`, and the appliance list stays empty. The page shows a message when this happens.
 
 **Option 2, full PWA test:** in a terminal, go to this folder and run:
 
