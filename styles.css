@@ -100,3 +100,23 @@ legend { font-weight: 700; padding: 0 .3rem; }
 .st-table .st-low { background: #e8f3ef; }
 .st-table .st-high { background: #fcefe3; }
 @media (min-width: 34rem) { .st-table { font-size: 1rem; } }
+
+/* "i" info buttons and popup */
+.label-row { display: flex; align-items: center; gap: .4rem; }
+.label-row label { margin-bottom: 0; }
+div.label-row { margin-bottom: .25rem; }
+.info-btn {
+  flex: none; width: 28px; height: 28px; padding: 0; border-radius: 50%; cursor: pointer;
+  border: 2px solid var(--accent); background: #fff; color: var(--accent); font: 700 .9rem/1 Georgia, serif;
+  position: relative;
+}
+.info-btn::after { content: ""; position: absolute; inset: -8px; } /* 44px tap target */
+.info-dialog { padding: 0; border: 1px solid var(--border); border-radius: 12px; width: min(92vw, 28rem); max-height: 85vh; color: var(--text); }
+.info-dialog::backdrop { background: rgba(0, 0, 0, .4); }
+.info-inner { padding: .9rem 1rem 1rem; }
+.info-head { display: flex; align-items: flex-start; justify-content: space-between; gap: .5rem; }
+.info-head h2 { font-size: 1.05rem; margin: .3rem 0 0; }
+.info-close { flex: none; width: 44px; height: 44px; margin: -.4rem -.5rem 0 0; border: 0; background: none; font-size: 1.6rem; cursor: pointer; color: var(--text); }
+.info-dialog ul { margin: .5rem 0 0; padding-left: 1.1rem; font-size: .95rem; }
+.info-dialog li { margin-bottom: .45rem; }
+div.label-row .info-btn { margin: -3px 0; }

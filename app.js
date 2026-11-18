@@ -227,6 +227,30 @@
   }
   [stA, stB].forEach(function (sel) { sel.addEventListener("change", function () { updateStates(); }); });
 
+  // "i" buttons: one shared plain-text popup (closes on ×, Escape, or tapping outside)
+  var dlg = $("info-dialog"), S = C.sources;
+  $("info-title").textContent = S.title;
+  S.items.forEach(function (t) {
+    var li = document.createElement("li");
+    li.textContent = t.replace("{month}", S.dataMonth);
+    $("info-list").appendChild(li);
+  });
+  var opener = null;
+  function closeInfo() {
+    if (dlg.close) dlg.close(); else dlg.removeAttribute("open");
+  }
+  dlg.addEventListener("close", function () { if (opener) opener.focus(); });
+  Array.prototype.forEach.call(document.querySelectorAll(".info-btn"), function (b) {
+    b.addEventListener("click", function () {
+      opener = b;
+      if (dlg.showModal) dlg.showModal(); else dlg.setAttribute("open", "");
+      $("info-close").focus();
+    });
+  });
+  $("info-close").addEventListener("click", closeInfo);
+  dlg.addEventListener("click", function (e) { if (e.target === dlg) closeInfo(); });
+  document.addEventListener("keydown", function (e) { if (e.key === "Escape" && dlg.hasAttribute("open")) closeInfo(); });
+
   els.appliance.addEventListener("change", applyPreset);
   els.hours.addEventListener("input", function () { syncTime("hours"); });
   els.duty.addEventListener("input", function () { syncTime("duty"); });

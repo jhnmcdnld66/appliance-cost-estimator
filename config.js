@@ -18,6 +18,19 @@ window.APP_CONFIG = {
   // State average residential rates in CENTS per kWh, Aug 2026 (preliminary), same EIA table.
   // Shown in the "Pick your state" dropdown. These are state averages, not any one utility's rate.
   stateRateLabel: "state average residential rate, Aug 2026 (EIA, preliminary)",
+  // Text of the "i" (Where do these numbers come from?) popup. Plain text only.
+  // {month} is replaced with dataMonth. Update dataMonth when you refresh the rates.
+  sources: {
+    title: "Where do these numbers come from?",
+    dataMonth: "August 2026 (preliminary)",
+    items: [
+      "Electric rates: U.S. Energy Information Administration (EIA), Electric Power Monthly, Table 5.6.A, average residential price by state. Published monthly, about two months behind. Currently using {month}.",
+      "Old refrigerator use: ENERGY STAR refrigerator guide (2012).",
+      "New refrigerator and freezer use: ENERGY STAR certified product list (median of certified models).",
+      "Formula: watts x hours per day / 1000 x rate = cost per day.",
+      "Estimates only; check your bill for your exact rate."
+    ]
+  },
   // "Compare states" section: the two states shown at first (codes from stateRates below)
   stateCompare: {
     defaults: ["NY", "NV"],

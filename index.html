@@ -65,7 +65,7 @@
           <select id="state"></select>
         </div>
         <div class="field">
-          <label for="rate">Electric rate ($ per kWh)</label>
+          <div class="label-row"><label for="rate">Electric rate ($ per kWh)</label><button type="button" class="info-btn" aria-label="Where do these numbers come from?" aria-haspopup="dialog">i</button></div>
           <input id="rate" type="number" inputmode="decimal" min="0" step="0.0001" aria-describedby="rate-label rate-check">
         </div>
       </div>
@@ -107,7 +107,7 @@
     </section>
 
     <section id="states" class="card" aria-labelledby="states-heading">
-      <h2 id="states-heading">Compare states</h2>
+      <h2 class="label-row"><span id="states-heading">Compare states</span><button type="button" class="info-btn" aria-label="Where do these numbers come from?" aria-haspopup="dialog">i</button></h2>
       <p id="st-for" class="hint"></p>
       <div class="st-pickers">
         <div class="field">
@@ -130,7 +130,7 @@
     </section>
 
     <section id="compare" class="card" aria-labelledby="compare-heading">
-      <h2 id="compare-heading">Compare old vs new</h2>
+      <h2 class="label-row"><span id="compare-heading">Compare old vs new</span><button type="button" class="info-btn" aria-label="Where do these numbers come from?" aria-haspopup="dialog">i</button></h2>
       <p class="hint">See how much you could save by replacing an old refrigerator or freezer. Uses your electric rate from above.</p>
       <form id="compare-form" novalidate>
         <div class="field">
@@ -228,6 +228,15 @@
     <p><a href="pages/about.html">About</a> · <a href="pages/privacy.html">Privacy</a> · <a href="pages/disclaimer.html">Disclaimer</a></p>
   </footer>
 
+  <dialog id="info-dialog" class="info-dialog" aria-labelledby="info-title">
+    <div class="info-inner">
+      <div class="info-head">
+        <h2 id="info-title"></h2>
+        <button type="button" id="info-close" class="info-close" aria-label="Close">×</button>
+      </div>
+      <ul id="info-list"></ul>
+    </div>
+  </dialog>
   <noscript><p class="error" style="text-align:center">Please turn on JavaScript to use the calculator.</p></noscript>
   <!-- Plain scripts (no modules, no fetch) so the page works when opened directly from a file. Order matters: config first. -->
   <script>
