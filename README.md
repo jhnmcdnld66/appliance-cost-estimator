@@ -72,7 +72,8 @@ After changing any file, open `sw.js` and bump `CACHE_VERSION` (for example `ace
 The "Compare old vs new" section uses the `compare` part of `config.js`:
 
 - **New models:** medians from ENERGY STAR's public data for full-size certified [refrigerators](https://data.energystar.gov/Active-Specifications/ENERGY-STAR-Certified-Residential-Refrigerators/p5st-her9) and [freezers](https://data.energystar.gov/Active-Specifications/ENERGY-STAR-Certified-Residential-Freezers/8t9c-g3tn), downloaded Nov 2026. "ENERGY STAR new" is the median EnergyGuide kWh/year. "Standard new" is the median U.S. federal standard maximum for those same models.
-- **Old models:** **rough estimates** (standard new × 1.8 before 2001, × 1.35 for 2001–2010, × 1.15 for 2011–2020). They are not measured data, and the page labels them that way.
+- **Old refrigerators:** ENERGY STAR figures for a typical refrigerator of that age: about 1980 = 1,821 kWh/yr, about 1990 = 1,180, before 1993 (average) = 1,000, about 2000 = 810. Source: ENERGY STAR, [Understanding and Designing Residential Appliance Efficiency and Recycling Programs](https://www.energystar.gov/sites/default/files/asset/document/Appliance_and_Recycling_Quick_Start_Guide.pdf) (Dec 2012), Exhibit 2, citing the 2012 ENERGY STAR Data Book. There's no official figure for 2001 and newer, so that option asks for the EnergyGuide label.
+- **Old freezers:** **rough estimates** (standard new × 1.8 before 2001, × 1.35 for 2001–2010, × 1.15 for 2011–2020). They are not official data, and the page labels them that way.
 - Users can type the kWh/year from the yellow EnergyGuide label for their exact old and new models. This replaces the typical values.
 
 To refresh the numbers, re-download the ENERGY STAR data and update `standardNew`, `energyStarNew`, and `n` for each type.
@@ -88,7 +89,7 @@ All of these show up only below the results. Nothing covers the calculator, and 
 
 ## Sources for defaults
 
-- **Default rate $0.17/kWh**: placeholder, roughly the U.S. average residential electricity price (about 16 to 18¢/kWh in 2024 to 2025) from the U.S. Energy Information Administration, *Electric Power Monthly*, Table 5.6.A. Check the current number at <https://www.eia.gov/electricity/monthly/>.
+- **Default rate $0.1816/kWh and state rates**: U.S. and state average residential prices for August 2026 (preliminary) from the U.S. Energy Information Administration, *Electric Power Monthly*, [Table 5.6.A](https://www.eia.gov/electricity/monthly/xls/table_5_06_a.xlsx) (released 2026-10-23). To update them, edit `defaultRate` and `stateRates` (in cents) in `config.js`.
 - **Wattages**: typical values in line with the U.S. Department of Energy's appliance energy guidance (<https://www.energy.gov/energysaver/estimating-appliance-and-home-electronic-energy-use>) and common product specs (1500 W plug-in heaters, 4500 W water heater elements, 120 V × 12 A ≈ 1.4 kW Level 1 EV charging, 240 V × 30 A ≈ 7.2 kW Level 2). Real appliances vary; the notes in `config.js` give typical ranges.
 - **Default "percent of time running"** values for cycling appliances (fridge 35%, AC/heat pump 60%, and others) are rough rules of thumb, not measured data.
 
@@ -98,8 +99,8 @@ All of these show up only below the results. Nothing covers the calculator, and 
 - [ ] Sign up for affiliate program(s) and replace the placeholder affiliate links. Keep the disclosure.
 - [ ] Set up a tip page and replace the tip link.
 - [ ] Update the Privacy page if any affiliate or tip services add tracking.
-- [ ] Double-check the default rate against the latest EIA data.
+- [ ] Refresh the default and state rates from the latest EIA Table 5.6.A (August 2026 numbers are preliminary).
 - [ ] Review the preset wattages and duty-cycle defaults.
 - [ ] Test "Add to Home Screen" and offline mode on a real iPhone and Android phone once hosted (needs HTTPS).
-- [ ] Find a sourced replacement for the "rough estimate" old-appliance multipliers, and consider adding window AC, dehumidifiers, washers/dryers, and water heaters to the comparison.
+- [ ] Find a sourced replacement for the "rough estimate" old-freezer multipliers, and consider adding window AC, dehumidifiers, washers/dryers, and water heaters to the comparison.
 - [ ] Optional: find a local sponsor and turn on the sponsor card.

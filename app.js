@@ -6,7 +6,7 @@
   var els = {
     appliance: $("appliance"), note: $("appliance-note"), watts: $("watts"),
     hours: $("hours"), days: $("days"), duty: $("duty"), dutyTip: $("duty-tip"),
-    rate: $("rate"), rateLabel: $("rate-label"), error: $("form-error"),
+    rate: $("rate"), rateLabel: $("rate-label"), state: $("state"), error: $("form-error"),
     share: $("share-x")
   };
 
@@ -18,8 +18,41 @@
     opt.textContent = a.name;
     els.appliance.appendChild(opt);
   });
+
+  // State picker: fills in the state's average rate; typing your own rate switches it to "My own rate"
+  C.stateRates.forEach(function (s) {
+    var opt = document.createElement("option");
+    opt.value = s.code;
+    opt.textContent = s.name + " (" + s.cents + "¢)";
+    els.state.appendChild(opt);
+  });
+  var own = document.createElement("option");
+  own.value = "custom"; own.textContent = "My own rate";
+  els.state.appendChild(own);
+
+  function showRateLabel() {
+    var s = C.stateRates.find(function (x) { return x.code === els.state.value; });
+    els.rateLabel.textContent = !s ? "Using your own rate." :
+      s.code === "US" ? "Using the " + C.defaultRateLabel + "." :
+      "Using the " + s.name + " " + C.stateRateLabel + ".";
+  }
+  var fillingFromState = false;
+  els.state.addEventListener("change", function () {
+    var s = C.stateRates.find(function (x) { return x.code === els.state.value; });
+    if (s) {
+      els.rate.value = Math.round(s.cents * 100) / 10000;
+      fillingFromState = true;
+      els.rate.dispatchEvent(new Event("input", { bubbles: true }));
+      fillingFromState = false;
+    }
+    showRateLabel();
+  });
+  els.rate.addEventListener("input", function () {
+    if (!fillingFromState) { els.state.value = "custom"; showRateLabel(); }
+  });
+  els.state.value = "US";
   els.rate.value = C.defaultRate;
-  els.rateLabel.textContent = "Default: " + C.defaultRateLabel + ". Change it to your own rate.";
+  showRateLabel();
 
   function current() {
     return C.appliances.find(function (a) { return a.id === els.appliance.value; }) || C.appliances[0];

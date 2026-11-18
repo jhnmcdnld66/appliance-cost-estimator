@@ -16,8 +16,16 @@
     });
   }
   fill(type, C.types, "name");
-  fill(oldAge, C.oldBands, "label");
-  $("cmp-source").textContent = C.sourceNote;
+
+  function currentType() { return C.types.find(function (x) { return x.id === type.value; }) || C.types[0]; }
+  var shownGroup = null;
+  function syncBands() {
+    var g = currentType().group;
+    if (g === shownGroup) return;
+    shownGroup = g;
+    fill(oldAge, C.oldBands[g], "label");
+    $("cmp-source").innerHTML = C.newSourceNote + " " + C.oldSourceNote[g] + " " + C.labelNote;
+  }
 
   function money(v) {
     return "$" + v.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
@@ -26,7 +34,9 @@
   function val(el) { return el.value.trim() === "" ? null : parseFloat(el.value); }
 
   function compare() {
-    var t = C.types.find(function (x) { return x.id === type.value; }) || C.types[0];
+    syncBands();
+    var t = currentType();
+    var band = C.oldBands[t.group].find(function (b) { return b.id === oldAge.value; });
     var r = parseFloat(rate.value), oLabel = val(oldKwh), nLabel = val(newKwh), p = val(price);
     var err = $("cmp-error");
     if (!(r >= 0) || (oLabel !== null && !(oLabel >= 0)) || (nLabel !== null && !(nLabel >= 0)) || (p !== null && !(p >= 0))) {
@@ -34,13 +44,20 @@
       err.hidden = false;
       return false;
     }
+    if (oLabel === null && band.needsLabel) {
+      err.textContent = "There's no official typical figure for refrigerators from 2001 or newer. Enter the kWh/year from the old refrigerator's EnergyGuide label.";
+      err.hidden = false;
+      ["cmp-old-year-kwh", "cmp-old-year-cost", "cmp-save-kwh", "cmp-save-year"].forEach(function (id) { $(id).textContent = "–"; });
+      $("cmp-save-month").textContent = ""; $("cmp-payback").textContent = ""; $("cmp-old-src").textContent = "";
+      return false;
+    }
     err.hidden = true;
 
-    var oldYear = oLabel !== null ? oLabel : t.standardNew * C.oldMultipliers[oldAge.value];
+    var oldYear = oLabel !== null ? oLabel : band.kwh || t.standardNew * band.multiplier;
     var newYear = nLabel !== null ? nLabel : t[newKind.value];
-    $("cmp-old-src").textContent = oLabel !== null ? "(your label)" : "(rough estimate)";
-    $("cmp-new-src").textContent = nLabel !== null ? "(your label)" :
-      "(" + (newKind.value === "energyStarNew" ? "ENERGY STAR median" : "federal standard median") + ")";
+    $("cmp-old-src").textContent = oLabel !== null ? "your label" : band.tag;
+    $("cmp-new-src").textContent = nLabel !== null ? "your label" :
+      newKind.value === "energyStarNew" ? "ENERGY STAR median" : "federal standard median";
 
     var saveYear = (oldYear - newYear) * r;
     $("cmp-old-year-kwh").textContent = kwh(oldYear);
@@ -61,7 +78,7 @@
     } else {
       pb.textContent = "Enter a price above to see how long the savings take to pay for the new appliance.";
     }
-    $("cmp-rate-note").textContent = "Using your electric rate of $" + r + "/kWh.";
+    $("cmp-rate-note").textContent = "Using your electric rate of $" + r + "/kWh from above.";
     return true;
   }
 

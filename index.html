@@ -58,10 +58,19 @@
         it actually runs in your home and weather.
       </p>
 
+      <div class="grid">
+        <div class="field">
+          <label for="state">Pick your state (state average)</label>
+          <select id="state"></select>
+        </div>
+        <div class="field">
+          <label for="rate">Electric rate ($ per kWh)</label>
+          <input id="rate" type="number" inputmode="decimal" min="0" step="0.0001" aria-describedby="rate-label rate-check">
+        </div>
+      </div>
       <div class="field">
-        <label for="rate">Electric rate ($ per kWh)</label>
-        <input id="rate" type="number" inputmode="decimal" min="0" step="0.001" aria-describedby="rate-label">
         <p id="rate-label" class="hint"></p>
+        <p id="rate-check" class="hint"><strong>Check your bill for your exact rate.</strong> State averages aren't your utility's rate.</p>
         <details>
           <summary>How do I find my rate?</summary>
           <p>Look at your electric bill. The simplest way: divide the <strong>total amount due</strong>
