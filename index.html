@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Appliance Running-Cost Estimator</title>
+  <meta name="description" content="Estimate how much it costs to run a home appliance per hour, day, month, and year at your electric rate.">
+  <meta name="theme-color" content="#1f6f5c">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <a class="skip" href="#main">Skip to calculator</a>
+  <header class="site-header">
+    <a class="brand" href="index.html">Appliance Cost Estimator</a>
+    <nav aria-label="Main">
+      <a href="pages/about.html">About</a>
+      <a href="pages/privacy.html">Privacy</a>
+      <a href="pages/disclaimer.html">Disclaimer</a>
+    </nav>
+  </header>
+
+  <main id="main">
+    <h1>How much does it cost to run?</h1>
+    <p class="lead">Pick an appliance, adjust the numbers, and see the estimated electricity cost.</p>
+
+    <form id="calc-form" class="card" novalidate>
+      <div class="field">
+        <label for="appliance">Appliance</label>
+        <select id="appliance"></select>
+        <p id="appliance-note" class="hint" aria-live="polite"></p>
+      </div>
+
+      <div class="grid">
+        <div class="field">
+          <label for="watts">Power (watts)</label>
+          <input id="watts" type="number" inputmode="decimal" min="0" step="any">
+        </div>
+        <div class="field">
+          <label for="hours">Hours per day</label>
+          <input id="hours" type="number" inputmode="decimal" min="0" max="24" step="any">
+        </div>
+        <div class="field">
+          <label for="days">Days per month</label>
+          <input id="days" type="number" inputmode="numeric" min="0" max="31" step="1">
+        </div>
+        <div class="field">
+          <label for="duty">Percent of time running (optional)</label>
+          <input id="duty" type="number" inputmode="decimal" min="0" max="100" step="any" aria-describedby="duty-help">
+          <p id="duty-help" class="hint">Leave at 100 unless the appliance cycles on and off.</p>
+        </div>
+      </div>
+
+      <p id="duty-tip" class="tip" hidden>
+        <strong>Heads up:</strong> this appliance cycles on and off (thermostat or compressor), so it
+        doesn't draw full power the whole time. Lower the "percent of time running" to match how often
+        it actually runs in your home and weather.
+      </p>
+
+      <div class="field">
+        <label for="rate">Electric rate ($ per kWh)</label>
+        <input id="rate" type="number" inputmode="decimal" min="0" step="0.001" aria-describedby="rate-label">
+        <p id="rate-label" class="hint"></p>
+        <details>
+          <summary>How do I find my rate?</summary>
+          <p>Look at your electric bill. The simplest way: divide the <strong>total amount due</strong>
+            for electricity by the <strong>kWh used</strong> that month. Example: $120 ÷ 800 kWh = $0.15 per kWh.
+            <a href="pages/find-electric-rate.html">Step-by-step guide</a>.</p>
+        </details>
+      </div>
+
+      <p id="form-error" class="error" role="alert" hidden></p>
+    </form>
+
+    <section class="card results" aria-labelledby="results-heading">
+      <h2 id="results-heading">Estimated cost</h2>
+      <table>
+        <thead><tr><th scope="col">Period</th><th scope="col">Energy</th><th scope="col">Cost</th></tr></thead>
+        <tbody aria-live="polite">
+          <tr><th scope="row">Per hour</th><td id="kwh-hour">–</td><td id="cost-hour">–</td></tr>
+          <tr><th scope="row">Per day</th><td id="kwh-day">–</td><td id="cost-day">–</td></tr>
+          <tr class="highlight"><th scope="row">Per month</th><td id="kwh-month">–</td><td id="cost-month">–</td></tr>
+          <tr><th scope="row">Per year</th><td id="kwh-year">–</td><td id="cost-year">–</td></tr>
+        </tbody>
+      </table>
+      <p class="hint">"Per hour" is an hour of use. Per year = per month × 12. Estimates only — see the <a href="pages/disclaimer.html">disclaimer</a>.</p>
+      <a id="share-x" class="button" href="https://x.com/intent/post" target="_blank" rel="noopener noreferrer">Share on X</a>
+    </section>
+
+    <section class="card">
+      <h2>Learn more</h2>
+      <ul>
+        <li><a href="pages/space-heater-cost.html">How much does a space heater cost to run?</a></li>
+        <li><a href="pages/find-electric-rate.html">How to find your electric rate on your bill</a></li>
+        <li><a href="pages/watts-vs-kwh.html">Watts vs kWh explained</a></li>
+      </ul>
+    </section>
+
+    <!-- PLACEHOLDER blocks: below results only, never covering the calculator -->
+    <aside id="affiliate" class="card placeholder" aria-labelledby="affiliate-heading" hidden>
+      <p class="badge">Placeholder</p>
+      <h2 id="affiliate-heading"></h2>
+      <p id="affiliate-disclosure" class="disclosure"></p>
+      <ul id="affiliate-links"></ul>
+    </aside>
+
+    <aside id="sponsor" class="card placeholder" aria-label="Local sponsor" hidden>
+      <p class="badge">Local sponsor</p>
+      <h2 id="sponsor-name"></h2>
+      <p id="sponsor-message"></p>
+      <a id="sponsor-link" href="#" rel="sponsored nofollow">Learn more</a>
+    </aside>
+
+    <p id="tip" class="tip-line" hidden><span class="badge">Placeholder</span> Find this useful? <a id="tip-link" href="#"></a></p>
+  </main>
+
+  <footer class="site-footer">
+    <p>Results are estimates, not a quote from your utility. No data is collected.</p>
+    <p><a href="pages/about.html">About</a> · <a href="pages/privacy.html">Privacy</a> · <a href="pages/disclaimer.html">Disclaimer</a></p>
+  </footer>
+
+  <script src="config.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
