@@ -224,7 +224,7 @@
   </main>
 
   <footer class="site-footer">
-    <p>Results are estimates, not a quote from your utility. No data is collected.</p>
+    <p>Results are estimates, not a quote from your utility. No personal data is collected.</p>
     <p><a href="pages/about.html">About</a> · <a href="pages/privacy.html">Privacy</a> · <a href="pages/disclaimer.html">Disclaimer</a></p>
   </footer>
 
@@ -244,7 +244,7 @@
     window.APP_ERRORS = [];
     window.addEventListener("error", function (e) {
       var t = e.target;
-      if (t && t.tagName === "SCRIPT") {
+      if (t && t.tagName === "SCRIPT" && t.src.indexOf("gc.zgo.at") === -1) {
         window.APP_ERRORS.push("Couldn't load " + t.src.split("/").pop());
       } else if (t === window && e.message && e.message !== "Script error.") {
         window.APP_ERRORS.push((e.filename ? e.filename.split("/").pop() + ": " : "") + e.message);
@@ -272,5 +272,6 @@
       box.scrollIntoView();
     })();
   </script>
+  <script data-goatcounter="https://appliancecost.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
 </body>
 </html>

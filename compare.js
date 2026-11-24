@@ -90,11 +90,17 @@
     return true;
   }
 
-  [type, oldAge, newKind].forEach(function (el) { el.addEventListener("change", compare); });
-  [oldKwh, newKwh, price, rate].forEach(function (el) { el.addEventListener("input", compare); });
+  function userCompare() {
+    if (!compare()) return false;
+    if (window.aceCount) window.aceCount("compare-old-new/" + type.value + "/" + oldAge.value, "Compare old vs new");
+    return true;
+  }
+  [type, oldAge, newKind].forEach(function (el) { el.addEventListener("change", userCompare); });
+  [oldKwh, newKwh, price].forEach(function (el) { el.addEventListener("input", userCompare); });
+  rate.addEventListener("input", compare);
   $("compare-form").addEventListener("submit", function (e) {
     e.preventDefault();
-    if (!compare()) return;
+    if (!userCompare()) return;
     var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     $("cmp-results").scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "center" });
   });

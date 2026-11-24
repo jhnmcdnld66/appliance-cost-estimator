@@ -2,7 +2,7 @@
 // Online it always fetches fresh files first (so old and new versions never mix);
 // offline it falls back to the saved copy.
 // When you change the file list below, bump CACHE_VERSION.
-var CACHE_VERSION = "ace-v8";
+var CACHE_VERSION = "ace-v9";
 var FILES = [
   "./", "index.html", "styles.css", "config.js", "app.js", "compare.js", "manifest.webmanifest",
   "icons/icon.svg", "icons/icon-192.png", "icons/icon-512.png",
@@ -25,7 +25,10 @@ self.addEventListener("activate", function (e) {
 });
 
 self.addEventListener("fetch", function (e) {
-  if (e.request.method !== "GET" || new URL(e.request.url).origin !== location.origin) return;
+  // Only this site's own files: never touch the GoatCounter counter (gc.zgo.at, goatcounter.com) or any other site.
+  var url = new URL(e.request.url);
+  if (e.request.method !== "GET" || url.origin !== location.origin ||
+      /(^|\.)(zgo\.at|goatcounter\.com)$/.test(url.hostname)) return;
   e.respondWith(fetch(e.request, { cache: "no-cache" }).then(function (res) {
     if (res.ok) {
       var copy = res.clone();

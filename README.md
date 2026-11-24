@@ -2,7 +2,7 @@
 
 A small web app that estimates how much a home appliance costs to run per hour, day, month, and year at your electric rate.
 
-It's plain HTML, CSS, and JavaScript: no frameworks, no build step, no backend, no cookies, no tracking. It can be added to a phone's home screen and works offline (it's a PWA).
+It's plain HTML, CSS, and JavaScript: no frameworks, no build step, no backend, no cookies. The only outside script is GoatCounter, an anonymous, cookie-free visit counter (see `pages/privacy.html`). It can be added to a phone's home screen and works offline (it's a PWA).
 
 ## What each file does
 

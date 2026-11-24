@@ -9,6 +9,19 @@
   if (!C) throw new Error("settings from config.js are missing");
   var $ = function (id) { return document.getElementById(id); };
 
+  // Anonymous GoatCounter events: preset ids, state codes and types only, never typed numbers.
+  // Each path is sent at most once per page load. Does nothing if the counter is blocked or not loaded.
+  var counted = {};
+  window.aceCount = function (path, title) {
+    if (counted[path]) return;
+    try {
+      if (window.goatcounter && typeof window.goatcounter.count === "function") {
+        window.goatcounter.count({ path: path, title: title || path, event: true });
+        counted[path] = true;
+      }
+    } catch (err) { /* counting is optional */ }
+  };
+
   var els = {
     appliance: $("appliance"), note: $("appliance-note"), watts: $("watts"),
     hours: $("hours"), days: $("days"), duty: $("duty"), dutyTip: $("duty-tip"),
@@ -50,6 +63,7 @@
   els.state.addEventListener("change", function () {
     var s = C.stateRates.find(function (x) { return x.code === els.state.value; });
     if (s) {
+      window.aceCount("state/" + s.code, "State picked");
       els.rate.value = Math.round(s.cents * 100) / 10000;
       fillingFromState = true;
       els.rate.dispatchEvent(new Event("input", { bubbles: true }));
@@ -225,7 +239,14 @@
       stShare.href = "https://x.com/intent/post?text=" + encodeURIComponent(text) + "&url=" + encodeURIComponent(C.siteUrl);
     }
   }
-  [stA, stB].forEach(function (sel) { sel.addEventListener("change", function () { updateStates(); }); });
+  [stA, stB].forEach(function (sel) {
+    sel.addEventListener("change", function () {
+      updateStates();
+      window.aceCount("compare-states/" + stA.value + "-vs-" + stB.value, "Compare states");
+    });
+  });
+  els.share.addEventListener("click", function () { window.aceCount("share/calc", "Share on X: calculator"); });
+  stShare.addEventListener("click", function () { window.aceCount("share/compare-states", "Share on X: compare states"); });
 
   // "i" buttons: one shared plain-text popup (closes on ×, Escape, or tapping outside)
   var dlg = $("info-dialog"), S = C.sources;
@@ -261,6 +282,7 @@
   $("calc-form").addEventListener("submit", function (e) {
     e.preventDefault();
     if (!calculate()) return;
+    window.aceCount("calc/" + current().id, "Calculate now");
     var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     var results = $("results-heading");
     results.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "start" });
